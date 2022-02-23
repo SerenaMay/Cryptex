@@ -1,14 +1,14 @@
-// -- Code base from Project 1
+// Code Base
 
 import * as dat from "https://unpkg.com/three@0.120.0/examples/jsm/libs/dat.gui.module.js";
 import * as THREE from 'https://unpkg.com/three@0.120.0/build/three.module.js';
 import { OrbitControls } from 'https://unpkg.com/three@0.120.0/examples/jsm/controls/OrbitControls.js';
 
-let container;      	// keeping the canvas here for easy access
+let container;
 let scene;
 let camera;
 let renderer;
-let cubes = []; 	// mesh, subject of scene
+let cubes = [];
 let cameraControls;
 
 let correctSpokeVals = [];
@@ -34,17 +34,14 @@ let tb = gui.add(textBox, "textField").onFinishChange(function (value) {
 var lockButton = { lock:function(){ lock() } };
 let lb = gui.add(lockButton, 'lock');
 
-// YOU are modifying this function
 function createScene()
 {
-    // Create Geometry ----
+    // Create Geometry 
 
 
     const centerGeometry = new THREE.BoxGeometry( 2, 2, 2);
-
-    // Create Meshes/Cubes  --------------------------------------------
-
-    // Cubes[] -- spokes for cryptex
+  
+    // Cubes[] -- line of spokes
     cubes =
         [
           createSpoke(centerGeometry,  -10),
@@ -63,6 +60,7 @@ function createScene()
 
 }
 
+// Creates one "wheel" on the Cryptex
 function createSpoke(centerGeometry, zpo) {
   const material = new THREE.MeshPhongMaterial( {color: 0xffffff} );
 
@@ -103,7 +101,7 @@ function createSpoke(centerGeometry, zpo) {
   return centerCube;
 }
 
-// Creating a single Cube here.
+// Creating a single Cubeoid at a position with a color
 function createCube( geometry, color, xpos, ypos, zpos, centerCube )
 {
     const material = new THREE.MeshPhongMaterial( {color} );
@@ -129,6 +127,7 @@ function createCube( geometry, color, xpos, ypos, zpos, centerCube )
     return cube;
 }
 
+// Creates decorations of Cryptex
 function createDecor() {
   var decorMat = new THREE.MeshPhongMaterial( { color: 0xC9AC8F} );
 
@@ -206,7 +205,7 @@ function createCameraControls()
     cameraControls = new OrbitControls( camera, container );
 }
 
-
+// Creates points of light for scene
 function createLights()
 {
     // create 4 identical lights to light scene equally
@@ -238,10 +237,10 @@ function createLights()
 
 }
 
-
+// Creates viewpoint for scene
 function createCamera()
 {
-    // Create a Camera  -------------------------------------------------
+    // Create a Camera 
     const aspect = container.clientWidth / container.clientHeight;
     const fov = 50;           // fov = Field Of View
     const near = 0.1;          // the near clipping plane
@@ -249,15 +248,12 @@ function createCamera()
     camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
     //camera.position.set( 0, 0, 10 );
-    // every object is initially created at ( 0, 0, 0 )
-    // we'll move the camera **back** a bit so that we can view the scene
+    // every object is initially created at ( 0, 0, 0 ) and needs to be moved
     camera.position.x = -2;   // x+ is to the right.
     camera.position.y = 6;    // y+ is up.
     camera.position.z = 4;   // z+ moves camera closer (to us). z- further away.
     camera.position.set( -30, 30, 25 );
     camera.lookAt(0, 0, 10);
-
-    // -----------------------------------------------------------------------
 }
 
 
@@ -341,10 +337,7 @@ function init()
 
 }
 
-
-// start the animation loop - we don't have to do requestAnimation as
-// we did in 'animate',  setAnimationLoop  will do the work for us.
-//
+// Wraps update and render functions to be repeated
 function play()
 {
     renderer.setAnimationLoop( ( timestamp ) =>
@@ -380,29 +373,20 @@ function update( timestamp )
 
 function render( )
 {
-    // render, or 'create a still image', of the scene
+    // render scene
     renderer.render( scene, camera );
 }
 
 
 function onWindowResize()
 {
-    // console.log( 'You resized the browser window!' );
-
-    // need to resize everything that is effected by the resize
-        // camera's aspect and the
-        // renderers  setSize == see init()
-
-    // set the aspect ratio to match the new browser window aspect ratio
+    // Adjust viewport size when window changes size
     camera.aspect = container.clientWidth / container.clientHeight;
-
-    // update the camera's frustum - so that the new aspect size takes effect.
     camera.updateProjectionMatrix();
-
-    // update the size of the renderer AND the canvas (done for us!)
     renderer.setSize( container.clientWidth, container.clientHeight );
 }
 
+// rotate a spoke up
 function rotateUp(cube) {
   cubes[cube].rotateZ(-Math.PI/4);
 
@@ -415,6 +399,7 @@ function rotateUp(cube) {
   //console.log(spokeVals[cube]);
 }
 
+// rotate a spoke down
 function rotateDown(cube) {
   cubes[cube].rotateZ(Math.PI/4);
 
@@ -423,10 +408,9 @@ function rotateDown(cube) {
   } else {
     spokeVals[cube] -= 1;
   }
-
-  //console.log(spokeVals[cube]);
 }
 
+// "Locks" cryptex and current string inside
 function lock() {
 
   for (var i = 0; i < spokeVals.length; i++) {
@@ -445,6 +429,7 @@ function lock() {
   capOne.position.z = 9;
 }
 
+// Unlocks cryptex and releases string, IF it is in correct position
 function unlock() {
 
   var correctCombo = true;
@@ -461,6 +446,7 @@ function unlock() {
   }
 }
 
+// Listener for resizing to adjust for window resizing
 window.addEventListener( 'resize', onWindowResize );
 
 //listener for keypress to rotate spokes
